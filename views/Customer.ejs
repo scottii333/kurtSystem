@@ -336,6 +336,7 @@
         const productDiv = document.createElement('div');
         productDiv.classList.add('cartProduct');
         productDiv.setAttribute('data-product', product.ProductName);
+        productDiv.setAttribute('data-stock', product.Stock);
         productDiv.style.display = 'flex';
         productDiv.style.alignItems = 'center';
         productDiv.style.marginBottom = '10px';
@@ -407,14 +408,29 @@
       const products = [];
       const productElements = document.querySelectorAll('.cartProduct');
       let totalSubtotal = 0;
+      let quantityExceedsStock = false;
 
       productElements.forEach(element => {
         const productName = element.querySelector('p').textContent;
         const quantity = parseInt(element.querySelector('.quantityDisplay').textContent.split(':')[1].trim());
         const subtotal = parseFloat(element.querySelector('.subtotalDisplay').textContent.replace('Subtotal: ₱', ''));
+        const stock = parseInt(element.getAttribute('data-stock')); 
         totalSubtotal += subtotal;
+
+        if (quantity > stock) {
+          quantityExceedsStock = true;
+          alert(`The quantity of ${productName} in your cart exceeds the available stock. Stock: ${stock}`);
+          return; 
+        }
+
+
+
         products.push({ productName, quantity, subtotal });
       });
+
+      if (quantityExceedsStock) {
+        return; 
+      }
 
       const name = document.getElementById('name').value.trim();
       const deliveryAddress = document.getElementById('delivery').value.trim();
@@ -439,22 +455,20 @@
 
       socket.emit('confirmOrder', orderData);
 
-      alert("Your Order is being process, we will notify you in the number you provide! Thankyou")
 
+      alert("Your order is being processed. We will notify you at the provided contact number. Thank you!");
       clearInputs();
-
-
 
     }
 
 
     function clearInputs() {
-    
+
       document.getElementById('name').value = '';
       document.getElementById('delivery').value = '';
       document.getElementById('number').value = '';
 
-   
+
       const productCartSection = document.querySelector('#productCartSection');
       productCartSection.innerHTML = '';
     }
