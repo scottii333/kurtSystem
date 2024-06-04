@@ -193,7 +193,7 @@
       <div style="width: 35rem; height: 35rem; display: flex; flex-wrap: wrap; justify-content: center;"
         class="cartSecondDiv">
         <h3 style="margin-top: 2rem; height: 2rem;">Order List</h3>
-        <div id="productCartsection"
+        <div id="productCartSection"
           style=" display: flex; justify-content: center; width: 40rem; height: 15rem; overflow-y: scroll; flex-wrap: wrap;">
 
         </div>
@@ -217,11 +217,254 @@
 
   </main>
 
+
+
+
   <script>
-    // Connect to Socket.IO server
+
     const socket = io();
 
+    document.addEventListener("DOMContentLoaded", displayProductCustomer);
+
+    async function displayProductCustomer() {
+      try {
+        const response = await fetch("/shoes_products");
+        const products = await response.json();
+
+        const menCategory = document.querySelector("#menCategory");
+        const womenCategory = document.querySelector("#womenCategory");
+        const kidCategory = document.querySelector("#kidCategory");
+
+
+
+        products.forEach(product => {
+          const newProductDiv = document.createElement('div');
+          newProductDiv.classList.add('HomeProduct');
+          newProductDiv.style.border = '1px solid #ccc';
+          newProductDiv.style.borderRadius = '5px';
+          newProductDiv.style.padding = '10px';
+          newProductDiv.style.marginBottom = '20px';
+          newProductDiv.style.width = '300px';
+          newProductDiv.style.marginRight = "10px";
+          newProductDiv.style.display = "flex";
+          newProductDiv.style.alignItems = "center";
+          newProductDiv.style.flexDirection = "column";
+          newProductDiv.style.flexWrap = "wrap"
+
+
+          const img = document.createElement('img');
+          img.src = product.Image;
+          img.alt = 'Product Image';
+          img.style.width = '100px';
+          img.style.height = '100px';
+          img.style.marginLeft = "60px"
+          img.style.marginRight = "60px"
+
+          img.style.borderRadius = '5px';
+          img.style.marginBottom = '10px';
+
+          const productName = document.createElement('h2');
+          productName.textContent = product.ProductName;
+          productName.style.margin = '0';
+          productName.style.fontSize = '1.5rem';
+
+          const stock = document.createElement('p');
+          stock.textContent = `Stock: ${product.Stock}`;
+          stock.style.margin = '5px 0';
+
+          const price = document.createElement('p');
+          price.textContent = `Price: ${product.Price}`;
+          price.style.margin = '5px 0';
+
+          const size = document.createElement('p');
+          size.textContent = `Size: ${product.Size}`;
+          size.style.margin = '5px 0';
+
+          const quantityInput = document.createElement('input');
+          quantityInput.type = 'number';
+          quantityInput.style.width = "50px"
+          quantityInput.style.textAlign = "center";
+          quantityInput.min = '1';
+          quantityInput.value = '1';
+          quantityInput.style.margin = '5px 0';
+
+          const addToCartBtn = document.createElement('button');
+          addToCartBtn.textContent = 'Add to Cart';
+          addToCartBtn.style.margin = '5px 0';
+          addToCartBtn.addEventListener('click', () => {
+            addToCart(product);
+          });
+
+          newProductDiv.appendChild(img);
+          newProductDiv.appendChild(productName);
+          newProductDiv.appendChild(stock);
+          newProductDiv.appendChild(price);
+          newProductDiv.appendChild(size);
+          newProductDiv.appendChild(quantityInput);
+          newProductDiv.appendChild(addToCartBtn);
+
+          if (product.Category === 'men') {
+            menCategory.appendChild(newProductDiv);
+          } else if (product.Category === 'women') {
+            womenCategory.appendChild(newProductDiv);
+          } else if (product.Category === 'kids') {
+            kidCategory.appendChild(newProductDiv);
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching and displaying products:', error);
+      }
+    }
+
+    const productCartSection = document.getElementById('productCartSection');
+
+    function addToCart(product) {
+      const quantityInput = document.querySelector('input[type="number"]');
+      const quantity = parseInt(quantityInput.value);
+      const subtotal = product.Price * quantity;
+
+      const existingProduct = document.querySelector(`.cartProduct[data-product="${product.ProductName}"]`);
+
+      if (existingProduct) {
+        const existingQuantity = parseInt(existingProduct.querySelector('.quantityDisplay').textContent.split(':')[1].trim());
+        const newQuantity = existingQuantity + quantity;
+        const newSubtotal = product.Price * newQuantity;
+
+        existingProduct.querySelector('.quantityDisplay').textContent = `Quantity: ${newQuantity}`;
+        existingProduct.querySelector('.subtotalDisplay').textContent = `Subtotal: ₱${newSubtotal.toFixed(2)}`;
+      } else {
+        const productDiv = document.createElement('div');
+        productDiv.classList.add('cartProduct');
+        productDiv.setAttribute('data-product', product.ProductName);
+        productDiv.style.display = 'flex';
+        productDiv.style.alignItems = 'center';
+        productDiv.style.marginBottom = '10px';
+
+        const productName = document.createElement('p');
+        productName.textContent = product.ProductName;
+        productName.style.marginRight = '20px';
+
+        const quantityDisplay = document.createElement('p');
+        quantityDisplay.textContent = `Quantity: ${quantity}`;
+        quantityDisplay.classList.add('quantityDisplay');
+        quantityDisplay.style.marginRight = '20px';
+
+        const subtotalDisplay = document.createElement('p');
+        subtotalDisplay.textContent = `Subtotal: ₱${subtotal.toFixed(2)}`;
+        subtotalDisplay.classList.add('subtotalDisplay');
+        subtotalDisplay.style.marginRight = '20px';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => {
+          const newQuantity = parseInt(quantityDisplay.textContent.split(':')[1].trim()) - 1;
+          const newSubtotal = product.Price * newQuantity;
+
+          if (newQuantity >= 1) {
+            quantityDisplay.textContent = `Quantity: ${newQuantity}`;
+            subtotalDisplay.textContent = `Subtotal: ₱${newSubtotal.toFixed(2)}`;
+          } else {
+            productCartSection.removeChild(productDiv);
+          }
+          updateTotalPrice();
+        });
+
+        productDiv.appendChild(productName);
+        productDiv.appendChild(quantityDisplay);
+        productDiv.appendChild(subtotalDisplay);
+        productDiv.appendChild(removeBtn);
+
+        productCartSection.appendChild(productDiv);
+      }
+
+      quantityInput.addEventListener('input', () => {
+        const newQuantity = parseInt(quantityInput.value);
+        const newSubtotal = product.Price * newQuantity;
+        const subtotalDisplay = existingProduct ? existingProduct.querySelector('.subtotalDisplay') : productDiv.querySelector('.subtotalDisplay');
+        subtotalDisplay.textContent = `Subtotal: ₱${newSubtotal.toFixed(2)}`;
+      });
+
+      updateTotalPrice();
+    }
+
+    function updateTotalPrice() {
+      const subtotalElements = document.querySelectorAll('.subtotalDisplay');
+      let totalPrice = 0;
+
+      subtotalElements.forEach(element => {
+        const subtotal = parseFloat(element.textContent.replace('Subtotal: ₱', ''));
+        totalPrice += subtotal;
+      });
+
+      totalPrice += 100;
+
+      const totalPriceElement = document.getElementById('totalPrice');
+      totalPriceElement.textContent = `Total: ₱${totalPrice.toFixed(2)}`;
+    }
+
+
+    function confirmOrder() {
+      const products = [];
+      const productElements = document.querySelectorAll('.cartProduct');
+      let totalSubtotal = 0;
+
+      productElements.forEach(element => {
+        const productName = element.querySelector('p').textContent;
+        const quantity = parseInt(element.querySelector('.quantityDisplay').textContent.split(':')[1].trim());
+        const subtotal = parseFloat(element.querySelector('.subtotalDisplay').textContent.replace('Subtotal: ₱', ''));
+        totalSubtotal += subtotal;
+        products.push({ productName, quantity, subtotal });
+      });
+
+      const name = document.getElementById('name').value.trim();
+      const deliveryAddress = document.getElementById('delivery').value.trim();
+      const contactNumber = document.getElementById('number').value.trim();
+      const paymentMethod = document.getElementById('paymentMethod').value;
+
+
+      if (name === '' || deliveryAddress === '' || contactNumber === '') {
+        alert('Please fill in all required fields.');
+        return;
+      }
+      const orderData = {
+        products,
+        userDetails: {
+          name,
+          deliveryAddress,
+          contactNumber,
+          paymentMethod
+        },
+        totalSubtotal
+      };
+
+      socket.emit('confirmOrder', orderData);
+
+      alert("Your Order is being process, we will notify you in the number you provide! Thankyou")
+
+      clearInputs();
+
+
+
+    }
+
+
+    function clearInputs() {
     
+      document.getElementById('name').value = '';
+      document.getElementById('delivery').value = '';
+      document.getElementById('number').value = '';
+
+   
+      const productCartSection = document.querySelector('#productCartSection');
+      productCartSection.innerHTML = '';
+    }
+
+
+
+  </script>
+
+  <script>
+
     function menCategory() {
       const menCategory = document.querySelector("#menCategory");
       const womenCategory = document.querySelector("#womenCategory");

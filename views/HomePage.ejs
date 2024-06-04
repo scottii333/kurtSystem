@@ -1,543 +1,519 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shoe Revolution - Home Page</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <script src="/socket.io/socket.io.js"></script>
-  </head>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      scroll-behavior: smooth;
-    }
 
-    body {
-      font-family: "Arial", sans-serif;
-      position: relative;
-    }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shoe Revolution - Home Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
 
-    nav {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      position: sticky;
-      margin-top: 1rem;
-      width: 96%;
-      top: 0;
-      z-index: 1000;
-      margin-left: 2%;
-      border-radius: 0.5rem;
-    }
+  body {
+    font-family: "Arial", sans-serif;
+    position: relative;
+  }
 
-    nav div {
-      margin: 1rem;
-    }
+  nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: sticky;
+    margin-top: 1rem;
+    width: 96%;
+    top: 0;
+    z-index: 1000;
+    margin-left: 2%;
+    border-radius: 0.5rem;
+  }
 
+  nav div {
+    margin: 1rem;
+  }
+
+  #navBtn {
+    background-color: #e36906;
+    display: flex;
+    border: none;
+    border-radius: 5rem;
+    padding: 0.5rem 4rem;
+    gap: 2rem;
+  }
+
+  #navBtn button {
+    color: white;
+  }
+
+  nav button {
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background-color: transparent;
+    border: none;
+  }
+
+  .hamburgerBtn {
+    height: 2rem;
+    width: 2rem;
+    background-color: transparent;
+    border: 0;
+    font-size: 1.5rem;
+    color: #e57125;
+    font-weight: 600;
+    display: none;
+  }
+
+  .hamburgerBtn:hover {
+    color: #643410;
+
+    cursor: pointer;
+    border-radius: 0.8rem;
+  }
+
+  .navBtnDropDown {
+    display: none;
+  }
+
+  .navBtnDropDown.active {
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    background-color: rgb(199, 199, 199);
+    align-items: center;
+    width: 100vw;
+    position: sticky;
+    top: 5rem;
+    z-index: 1000;
+  }
+
+  .navBtnDropDown button {
+    margin-top: 1rem;
+    padding: 3px 6px;
+    margin-bottom: 1rem;
+    border: none;
+  }
+
+  @media (min-width: 731px) {
+    .navBtnDropDown.active {
+      display: none;
+    }
+  }
+
+  @media (max-width: 730px) {
     #navBtn {
-      background-color: #e36906;
-      display: flex;
-      border: none;
-      border-radius: 5rem;
-      padding: 0.5rem 4rem;
-      gap: 2rem;
-    }
-
-    #navBtn button {
-      color: white;
-    }
-
-    nav button {
-      padding: 0.5rem;
-      cursor: pointer;
-      font-size: 1.2rem;
-      background-color: transparent;
-      border: none;
-    }
-
-    .hamburgerBtn {
-      height: 2rem;
-      width: 2rem;
-      background-color: transparent;
-      border: 0;
-      font-size: 1.5rem;
-      color: #e57125;
-      font-weight: 600;
       display: none;
     }
 
-    .hamburgerBtn:hover {
-      color: #643410;
+    #navBtn2 {
+      display: none;
+    }
 
-      cursor: pointer;
-      border-radius: 0.8rem;
+    .hamburgerBtn {
+      display: block;
     }
 
     .navBtnDropDown {
       display: none;
     }
 
-    .navBtnDropDown.active {
-      display: flex;
-      flex-direction: column;
-      width: 20rem;
-      background-color: rgb(199, 199, 199);
-      align-items: center;
-      width: 100vw;
-      position: sticky;
-      top: 5rem;
-      z-index: 1000;
-    }
-
-    .navBtnDropDown button {
-      margin-top: 1rem;
-      padding: 3px 6px;
-      margin-bottom: 1rem;
-      border: none;
-    }
-
-    @media (min-width: 731px) {
-      .navBtnDropDown.active {
-        display: none;
-      }
-    }
-
-    @media (max-width: 730px) {
-      #navBtn {
-        display: none;
-      }
-
-      #navBtn2 {
-        display: none;
-      }
-
-      .hamburgerBtn {
-        display: block;
-      }
-
-      .navBtnDropDown {
-        display: none;
-      }
-
-      .navBtns:hover {
-        background-color: transparent;
-        cursor: pointer;
-        border-radius: 0.8rem;
-      }
-    }
-
-    #HomePage {
+    .navBtns:hover {
       background-color: transparent;
-      width: 100%;
-      height: auto;
-    }
-
-    .mainImgDiv {
-      margin-top: 1rem;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-      text-align: center;
-      gap: 2rem;
-      background-color: #fff3e9;
-      padding-bottom: 5rem;
-    }
-
-    .mainFirstImg {
-      width: 40rem;
-    }
-
-    .mainFirstImg img {
-      max-width: 100%;
-    }
-
-    .mainFirstH1 h1 {
-      margin-bottom: 1rem;
-    }
-
-    .mainFirstH1 p {
-      margin-bottom: 1rem;
-    }
-
-    .mainFirstH1 button {
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: none;
-      background-color: #e36906;
       cursor: pointer;
+      border-radius: 0.8rem;
     }
+  }
 
-    .CompanyOverview {
-      margin-top: 20rem;
-      height: auto;
-      text-align: center;
-    }
+  #HomePage {
+    background-color: transparent;
+    width: 100%;
+    height: auto;
+  }
 
-    .ownerDivs {
-      margin-top: 5rem;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+  .mainImgDiv {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    gap: 2rem;
+    background-color: #fff3e9;
+    padding-bottom: 5rem;
+  }
 
-    .ownerDiv {
-      width: 20rem;
-      margin-right: 5rem;
-      margin-left: 5rem;
-    }
+  .mainFirstImg {
+    width: 40rem;
+  }
 
-    .ownerDiv img {
-      margin-bottom: 1rem;
-      border-radius: 50%;
-    }
+  .mainFirstImg img {
+    max-width: 100%;
+  }
 
-    .featuredProd {
-      margin-top: 10rem;
-      margin-left: 2%;
-      width: 96%;
-      height: 50rem;
-      background-color: #424242;
-      color: white;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+  .mainFirstH1 h1 {
+    margin-bottom: 1rem;
+  }
 
-    .featuredProd h1 {
-      width: 100%;
-      padding-top: 10rem;
-      text-align: center;
-      padding: 5rem;
-    }
-    .featuredShoesDisplay {
-      display: flex;
-      height: 20rem;
-      justify-content: center;
-      width: 60rem;
-      text-align: center;
-      flex-wrap: wrap;
-      overflow-y: scroll;
-    }
+  .mainFirstH1 p {
+    margin-bottom: 1rem;
+  }
 
-    .logIn {
-      margin-top: 20rem;
-      width: 100%;
-      text-align: left;
-      display: flex;
-      justify-content: center;
-      padding-top: 10rem;
-      padding-bottom: 25rem;
-      background-color: transparent;
-    }
+  .mainFirstH1 button {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #e36906;
+    cursor: pointer;
+  }
 
-    #logInSec {
-      background-color: #424242;
-      border-radius: 0.5rem;
-      color: white;
-      padding: 2rem;
-      width: 20rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
+  .CompanyOverview {
+    margin-top: 20rem;
+    height: auto;
+    text-align: center;
+  }
 
-    #createAccSec {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
+  .ownerDivs {
+    margin-top: 5rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 
-    #signUpSec {
-      background-color: #424242;
-      color: white;
-      text-align: left;
-      display: flex;
-      justify-content: center;
-      padding: 2rem;
-      width: 20rem;
-      display: none;
-    }
+  .ownerDiv {
+    width: 20rem;
+    margin-right: 5rem;
+    margin-left: 5rem;
+  }
 
-    #createAccSec {
-      width: 15rem;
-    }
+  .ownerDiv img {
+    margin-bottom: 1rem;
+    border-radius: 50%;
+  }
 
-    .companyPolicy {
-      margin-top: 20rem;
-      width: 100%;
-      height: auto;
-      display: flex;
-      justify-content: center;
-      background-color: #fff3e9;
-      flex-wrap: wrap;
-    }
+  .featuredProd {
+    margin-top: 10rem;
+    margin-left: 2%;
+    width: 96%;
+    height: 50rem;
+    background-color: #424242;
+    color: white;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+  }
 
-    .companyPolicyDiv {
-      margin-top: 5rem;
-      margin-bottom: 5rem;
-      width: 25rem;
-      background-color: white;
-      height: auto;
-      margin-right: 2rem;
-      margin-left: 2rem;
-      border-radius: 1rem;
-      text-align: center;
-      padding: 2rem;
-    }
+  .featuredProd h1 {
+    width: 100%;
+    padding-top: 10rem;
+    text-align: center;
+    padding: 5rem;
+  }
 
-    .companyPolicyDiv h2 {
-      margin-bottom: 3rem;
-    }
+  .featuredShoesDisplay {
+    display: flex;
+    height: 20rem;
+    justify-content: center;
+    width: 60rem;
+    text-align: center;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+  }
 
-    footer {
-      background-color: #424242;
-      color: #fff;
-      padding: 2rem;
-      text-align: center;
-      margin-top: 10rem;
-    }
+  .logIn {
+    margin-top: 20rem;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: center;
+    padding-top: 10rem;
+    padding-bottom: 25rem;
+    background-color: transparent;
+  }
 
-    .footer-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      justify-content: space-around;
-    }
+  #logInSec {
+    background-color: #424242;
+    border-radius: 0.5rem;
+    color: white;
+    padding: 2rem;
+    width: 20rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 
-    .footer-col {
-      flex: 1 1 200px;
-      min-width: 200px;
-    }
+  #createAccSec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 
-    .footer-col h3 {
-      margin-bottom: 1rem;
-    }
+  #signUpSec {
+    background-color: #424242;
+    color: white;
+    text-align: left;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    width: 20rem;
+    display: none;
+  }
 
-    .footer-col p,
-    .footer-col ul {
-      margin-bottom: 1rem;
-    }
+  #createAccSec {
+    width: 15rem;
+  }
 
-    .footer-col ul {
-      list-style: none;
-      padding: 0;
-    }
+  .companyPolicy {
+    margin-top: 20rem;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    background-color: #fff3e9;
+    flex-wrap: wrap;
+  }
 
-    .footer-col ul li {
-      margin-bottom: 0.5rem;
-    }
+  .companyPolicyDiv {
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+    width: 25rem;
+    background-color: white;
+    height: auto;
+    margin-right: 2rem;
+    margin-left: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    padding: 2rem;
+  }
 
-    .app-logo img {
-      width: 150px;
-      margin-right: 1rem;
-    }
+  .companyPolicyDiv h2 {
+    margin-bottom: 3rem;
+  }
 
-    hr {
-      border: 0;
-      border-top: 1px solid #fff;
-      margin: 2rem 0;
-    }
+  footer {
+    background-color: #424242;
+    color: #fff;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 10rem;
+  }
 
-    .account-page {
-      padding: 50px 0;
-      background: radial-gradient(#fff, #ffd6d6);
-    }
+  .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-around;
+  }
 
-    .copyright {
-      text-align: center;
-      margin-top: 1rem;
-    }
-  </style>
+  .footer-col {
+    flex: 1 1 200px;
+    min-width: 200px;
+  }
 
-  <body>
-    <nav>
-      <div>
-        <a href="#mainImgDiv"
-          ><img src="/icons/bola.png.png" width="50rem"
-        /></a>
-      </div>
-      <div id="navBtn">
-        <a href="#mainImgDiv"><button>Home</button></a>
-        <a href="#featuredProd"><button>Shoes</button></a>
-        <a href="#footer"><button>Contact us</button></a>
-      </div>
-      <div id="navBtn2">
-        <button>
-          <a href="#logIn">
-            <i style="color: #e36906" class="fa-solid fa-cart-shopping"></i>
-          </a>
-        </button>
-      </div>
-      <button class="hamburgerBtn toggle-btn">
-        <i class="fa-solid fa-bars"></i>
-      </button>
-    </nav>
+  .footer-col h3 {
+    margin-bottom: 1rem;
+  }
 
-    <div class="navBtnDropDown">
+  .footer-col p,
+  .footer-col ul {
+    margin-bottom: 1rem;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .footer-col ul li {
+    margin-bottom: 0.5rem;
+  }
+
+  .app-logo img {
+    width: 150px;
+    margin-right: 1rem;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid #fff;
+    margin: 2rem 0;
+  }
+
+  .account-page {
+    padding: 50px 0;
+    background: radial-gradient(#fff, #ffd6d6);
+  }
+
+  .copyright {
+    text-align: center;
+    margin-top: 1rem;
+  }
+</style>
+
+<body>
+  <nav>
+    <div>
+      <a href="#mainImgDiv"><img src="/icons/bola.png.png" width="50rem" /></a>
+    </div>
+    <div id="navBtn">
       <a href="#mainImgDiv"><button>Home</button></a>
       <a href="#featuredProd"><button>Shoes</button></a>
       <a href="#footer"><button>Contact us</button></a>
+    </div>
+    <div id="navBtn2">
       <button>
         <a href="#logIn">
           <i style="color: #e36906" class="fa-solid fa-cart-shopping"></i>
         </a>
       </button>
     </div>
+    <button class="hamburgerBtn toggle-btn">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </nav>
 
-    <main id="HomePage">
-      <div id="mainImgDiv" class="mainImgDiv">
-        <div class="mainFirstImg">
-          <img src="/icons/image1.png" />
-        </div>
+  <div class="navBtnDropDown">
+    <a href="#mainImgDiv"><button>Home</button></a>
+    <a href="#featuredProd"><button>Shoes</button></a>
+    <a href="#footer"><button>Contact us</button></a>
+    <button>
+      <a href="#logIn">
+        <i style="color: #e36906" class="fa-solid fa-cart-shopping"></i>
+      </a>
+    </button>
+  </div>
 
-        <div class="mainFirstH1">
-          <h1>Give your Workout <br />A New Style!</h1>
-          <p>
-            Success isn't always about greatness. It's about consistency.
-            Consistent<br />hard work gains success. Greatness will come.
-          </p>
-          <a href="#featuredProd"
-            ><button style="color: #eeeeee">Shop Now &#8594;</button></a
-          >
-        </div>
+  <main id="HomePage">
+    <div id="mainImgDiv" class="mainImgDiv">
+      <div class="mainFirstImg">
+        <img src="/icons/image1.png" />
       </div>
 
-      <div class="CompanyOverview">
-        <h1>Company Overview</h1>
-
-        <div class="ownerDivs">
-          <div class="ownerDiv">
-            <img src="/icons/Owner1.png" />
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </p>
-          </div>
-          <div class="ownerDiv">
-            <img src="/icons/Owner2.png" />
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </p>
-          </div>
-          <div class="ownerDiv">
-            <img src="/icons/Owner3.png" />
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </p>
-          </div>
-        </div>
+      <div class="mainFirstH1">
+        <h1>Give your Workout <br />A New Style!</h1>
+        <p>
+          Success isn't always about greatness. It's about consistency.
+          Consistent<br />hard work gains success. Greatness will come.
+        </p>
+        <a href="#featuredProd"><button style="color: #eeeeee">Shop Now &#8594;</button></a>
       </div>
+    </div>
 
-      <div id="featuredProd" class="featuredProd">
-        <h1>New Arrivals</h1>
-        <div class="featuredShoesDisplay"></div>
-      </div>
+    <div class="CompanyOverview">
+      <h1>Company Overview</h1>
 
-      <div class="companyPolicy">
-        <div class="companyPolicyDiv">
-          <h2>Refund Policy</h2>
+      <div class="ownerDivs">
+        <div class="ownerDiv">
+          <img src="/icons/Owner1.png" />
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-            commodo consequat. Duis aute irure dolor in reprehenderit in
-            voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-            officia deserunt mollit anim id est laborum eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat. Duis aute irure dolor in reprehenderit in
-            voluptate velit esse cillum dolore eu fugiat nulla
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat.
           </p>
         </div>
-
-        <div class="companyPolicyDiv">
-          <h2>Shipping Policy</h2>
+        <div class="ownerDiv">
+          <img src="/icons/Owner2.png" />
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-            commodo consequat. Duis aute irure dolor in reprehenderit in
-            voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-            officia deserunt mollit anim id est laborum eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat. Duis aute irure dolor in reprehenderit in
-            voluptate velit esse cillum dolore eu fugiat nulla
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat.
+          </p>
+        </div>
+        <div class="ownerDiv">
+          <img src="/icons/Owner3.png" />
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat.
           </p>
         </div>
       </div>
+    </div>
 
-      <section id="logIn" class="logIn">
-        <form id="logInSec" method="post" action="/logIn">
-          <label style="width: 20rem">Username</label>
+    <div id="featuredProd" class="featuredProd">
+      <h1>New Arrivals</h1>
+      <div class="featuredShoesDisplay"></div>
+    </div>
 
-          <input
-            type="text"
-            style="
+    <div class="companyPolicy">
+      <div class="companyPolicyDiv">
+        <h2>Refund Policy</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+          commodo consequat. Duis aute irure dolor in reprehenderit in
+          voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+          officia deserunt mollit anim id est laborum eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+          veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+          ea commodo consequat. Duis aute irure dolor in reprehenderit in
+          voluptate velit esse cillum dolore eu fugiat nulla
+        </p>
+      </div>
+
+      <div class="companyPolicyDiv">
+        <h2>Shipping Policy</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+          commodo consequat. Duis aute irure dolor in reprehenderit in
+          voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+          officia deserunt mollit anim id est laborum eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+          veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+          ea commodo consequat. Duis aute irure dolor in reprehenderit in
+          voluptate velit esse cillum dolore eu fugiat nulla
+        </p>
+      </div>
+    </div>
+
+    <section id="logIn" class="logIn">
+      <form id="logInSec" method="post" action="/logIn">
+        <label style="width: 20rem">Username</label>
+
+        <input type="text" style="
               border-radius: 0.8rem;
               width: 20rem;
               border: 0;
               height: 2rem;
               text-align: center;
-            "
-            name="Username"
-          />
+            " name="Username" />
 
-          <label>Password</label>
+        <label>Password</label>
 
-          <input
-            type="password"
-            style="
+        <input type="password" style="
               border-radius: 0.8rem;
               width: 20rem;
               border: 0;
               height: 2rem;
               text-align: center;
-            "
-            name="Password"
-          />
+            " name="Password" />
 
-          <label id="otpLabel" style="width: 20rem; display: none"></label>
+        <label id="otpLabel" style="width: 20rem; display: none"></label>
 
-          <input
-            type="text"
-            id="otpInput"
-            name="OTP"
-            style="
+        <input type="text" id="otpInput" name="OTP" style="
               width: 20rem;
               border-radius: 0.8rem;
               border: 0;
               background-color: #e8e8e8;
               height: 2rem;
               text-align: center;
-            "
-          />
-          <button
-            id="generateOTPBtn"
-            style="
+            " />
+        <button id="generateOTPBtn" style="
               margin-right: 6rem;
               margin-left: 6rem;
               padding: 0.5rem;
@@ -546,24 +522,18 @@
               background-color: #e57125;
               color: white;
               cursor: pointer;
-            "
-          >
-            Generate OTP
-          </button>
+            ">
+          Generate OTP
+        </button>
 
-          <a
-            href="#logIn"
-            style="
+        <a href="#logIn" style="
               width: 20rem;
               color: #e57125;
               text-decoration: none;
               font-weight: 400;
-            "
-            >Forgot Password</a
-          >
+            ">Forgot Password</a>
 
-          <button
-            style="
+        <button style="
               border-radius: 0.8rem;
               padding: 4px 7rem;
               border: 0;
@@ -571,16 +541,13 @@
               background-color: #e57125;
               color: white;
               cursor: pointer;
-            "
-            onclick="LoginIn(event)"
-          >
-            LogIn
-          </button>
+            " onclick="LoginIn(event)">
+          LogIn
+        </button>
 
-          <label style="width: 20rem; text-align: center">or</label>
+        <label style="width: 20rem; text-align: center">or</label>
 
-          <button
-            style="
+        <button style="
               color: #e57125;
               width: 20rem;
               padding: 0.5rem;
@@ -588,47 +555,36 @@
               border-radius: 0.8rem;
               background-color: transparent;
               cursor: pointer;
-            "
-            onclick="CreateAccount(event)"
-          >
-            Create an account
-          </button>
-        </form>
+            " onclick="CreateAccount(event)">
+          Create an account
+        </button>
+      </form>
 
-        <div id="signUpSec">
-          <form id="createAccSec" method="post" action="/createAccount">
-            <label style="width: 20rem">Username</label>
+      <div id="signUpSec">
+        <form id="createAccSec" method="post" action="/createAccount">
+          <label style="width: 20rem">Username</label>
 
-            <input
-              type="text"
-              style="
+          <input type="text" style="
                 border-radius: 0.8rem;
                 width: 20rem;
                 border: 0;
                 background-color: #e8e8e8;
                 height: 2rem;
                 text-align: center;
-              "
-              name="Username"
-            />
+              " name="Username" />
 
-            <label>Password</label>
+          <label>Password</label>
 
-            <input
-              type="password"
-              style="
+          <input type="password" style="
                 border-radius: 0.8rem;
                 width: 20rem;
                 border: 0;
                 background-color: #e8e8e8;
                 height: 2rem;
                 text-align: center;
-              "
-              name="Password"
-            />
+              " name="Password" />
 
-            <button
-              style="
+          <button style="
                 border-radius: 0.8rem;
                 padding-left: 6rem;
                 padding-right: 6rem;
@@ -638,16 +594,13 @@
                 background-color: #e57125;
                 color: white;
                 cursor: pointer;
-              "
-              onclick="SignUp(event)"
-            >
-              Sign Up
-            </button>
+              " onclick="SignUp(event)">
+            Sign Up
+          </button>
 
-            <label style="width: 20rem; text-align: center">or</label>
+          <label style="width: 20rem; text-align: center">or</label>
 
-            <button
-              style="
+          <button style="
                 color: #e57125;
                 width: 20rem;
                 padding: 0.5rem;
@@ -655,246 +608,327 @@
                 border-radius: 0.8rem;
                 background-color: transparent;
                 cursor: pointer;
-              "
-              onclick="backToLogIn(event)"
-            >
-              Back to Log In
-            </button>
-          </form>
+              " onclick="backToLogIn(event)">
+            Back to Log In
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer">
+    <div class="footer-container">
+      <section class="footer-col">
+        <h3>Download Our App</h3>
+        <p>Download App for Android and iOS mobile phones.</p>
+        <div class="app-logo">
+          <img src="/icons/play-store.png" alt="Play Store" />
+          <img src="/icons/app-store.png" alt="App Store" />
         </div>
       </section>
-    </main>
+      <section class="footer-col">
+        <img src="/icons/bola.png.png" width="100rem" alt="Logo" />
+        <p>
+          Our Purpose Is To Sustainably Make the Pleasure and Benefits of
+          Sports Accessible to the Many.
+        </p>
+      </section>
+      <section class="footer-col">
+        <h3>Useful Links</h3>
+        <ul>
+          <li>Coupons</li>
+          <li>Blog Post</li>
+          <li>Return Policy</li>
+          <li>Join Affiliate</li>
+        </ul>
+      </section>
+      <section class="footer-col">
+        <h3>Follow Us</h3>
+        <ul>
+          <li>Facebook</li>
+          <li>Twitter</li>
+          <li>Instagram</li>
+          <li>Youtube</li>
+        </ul>
+      </section>
+    </div>
+    <hr />
+    <p class="copyright">Copyright 2024 - Shoe Revolution</p>
+  </footer>
 
-    <footer id="footer">
-      <div class="footer-container">
-        <section class="footer-col">
-          <h3>Download Our App</h3>
-          <p>Download App for Android and iOS mobile phones.</p>
-          <div class="app-logo">
-            <img src="/icons/play-store.png" alt="Play Store" />
-            <img src="/icons/app-store.png" alt="App Store" />
-          </div>
-        </section>
-        <section class="footer-col">
-          <img src="/icons/bola.png.png" width="100rem" alt="Logo" />
-          <p>
-            Our Purpose Is To Sustainably Make the Pleasure and Benefits of
-            Sports Accessible to the Many.
-          </p>
-        </section>
-        <section class="footer-col">
-          <h3>Useful Links</h3>
-          <ul>
-            <li>Coupons</li>
-            <li>Blog Post</li>
-            <li>Return Policy</li>
-            <li>Join Affiliate</li>
-          </ul>
-        </section>
-        <section class="footer-col">
-          <h3>Follow Us</h3>
-          <ul>
-            <li>Facebook</li>
-            <li>Twitter</li>
-            <li>Instagram</li>
-            <li>Youtube</li>
-          </ul>
-        </section>
-      </div>
-      <hr />
-      <p class="copyright">Copyright 2024 - Shoe Revolution</p>
-    </footer>
 
-    <script>
-      const generateOTPBtn = document.getElementById("generateOTPBtn");
-      const otpLabel = document.getElementById("otpLabel");
-      const otpInput = document.getElementById("otpInput");
+  <script>
 
-      generateOTPBtn.addEventListener("click", generateOTP);
+    const socket = io();
 
-      function generateOTP(event) {
-        event.preventDefault();
-        const generatedOTP = Math.floor(100 + Math.random() * 900); // Generate a random 3-digit OTP
-        otpLabel.textContent = "OTP: " + generatedOTP;
-        otpLabel.style.display = "block";
-        otpInput.style.display = "block";
-      }
-      // Connect to Socket.IO server
-      const socket = io();
+    socket.on('productAdded', (productData) => {
+      console.log('New product added:', productData);
+      updateProductUI(productData);
+    });
 
-      socket.on("productAdded", displayProduct);
+    function updateProductUI(productData) {
 
-      function displayProduct(productInfo) {
-        const featuredShoesDisplay = document.querySelector(
-          ".featuredShoesDisplay"
-        );
+      const newProductDiv = document.createElement('div');
+      newProductDiv.classList.add('HomeProduct');
 
-        const featuredShoesDiv = document.createElement("div");
-        featuredShoesDiv.classList.add("featuredShoesDiv");
-        featuredShoesDiv.style.display = "flex";
-        featuredShoesDiv.style.flexDirection = "column";
-        featuredShoesDiv.style.alignItems = "center";
-        featuredShoesDiv.style.marginLeft = "5rem";
-        featuredShoesDiv.style.marginRight = "5rem";
-        featuredShoesDiv.style.marginTop = "5rem";
-        featuredShoesDiv.style.marginBottom = "5rem";
-        featuredShoesDiv.style.width = "auto";
-        featuredShoesDiv.style.height = "13rem";
+      newProductDiv.style.border = '1px solid #ccc';
+      newProductDiv.style.borderRadius = '5px';
+      newProductDiv.style.padding = '10px';
+      newProductDiv.style.marginBottom = '20px';
+      newProductDiv.style.width = '300px';
+      newProductDiv.style.marginRight = "10px";
 
-        const imageShoe = document.createElement("img");
-        imageShoe.style.width = "15rem";
-        imageShoe.style.height = "10rem";
-        imageShoe.src = productInfo.imgSrc;
-        featuredShoesDiv.appendChild(imageShoe);
+      const img = document.createElement('img');
+      img.src = productData.image;
+      img.alt = 'Product Image';
+      img.style.width = '50%';
+      img.style.height = 'auto';
+      img.style.borderRadius = '5px';
+      img.style.marginBottom = '10px';
 
-        const prodName = document.createElement("h2");
-        prodName.textContent = productInfo.productName;
-        prodName.style.marginTop = "2rem";
-        featuredShoesDiv.appendChild(prodName);
+      const productName = document.createElement('h2');
+      productName.textContent = productData.productName;
+      productName.style.margin = '0';
+      productName.style.fontSize = '1.5rem';
 
-        featuredShoesDisplay.appendChild(featuredShoesDiv);
-      }
+      const stock = document.createElement('p');
+      stock.textContent = `Stock: ${productData.stock}`;
+      stock.style.margin = '5px 0';
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const toggleBtn = document.querySelector(".toggle-btn");
-        const dropdownNav = document.querySelector(".navBtnDropDown");
+      const price = document.createElement('p');
+      price.textContent = `Price: ${productData.price}`;
+      price.style.margin = '5px 0';
 
-        toggleBtn.addEventListener("click", function () {
-          // Toggle the 'active' class on the dropdownNav
-          dropdownNav.classList.toggle("active");
+      const size = document.createElement('p');
+      size.textContent = `Size: ${productData.size}`;
+      size.style.margin = '5px 0';
 
-          // Toggle between menu icon and close icon
-          const icon = toggleBtn.querySelector("i");
+      newProductDiv.appendChild(img);
+      newProductDiv.appendChild(productName);
+      newProductDiv.appendChild(stock);
+      newProductDiv.appendChild(price);
+      newProductDiv.appendChild(size);
 
-          // Toggle 'fa-bars' and 'fa-times'
-          icon.classList.toggle("fa-bars");
-          icon.classList.toggle("fa-times");
+      const featuredShoesDisplay = document.querySelector('.featuredShoesDisplay');
+      featuredShoesDisplay.appendChild(newProductDiv);
+
+    }
+
+
+    document.addEventListener("DOMContentLoaded", fetchProductsAndDisplay);
+
+    async function fetchProductsAndDisplay() {
+      try {
+        const response = await fetch("/shoes_products");
+        const products = await response.json();
+
+        const featuredShoesDisplay = document.querySelector('.featuredShoesDisplay');
+
+        products.forEach(product => {
+          const newProductDiv = document.createElement('div');
+          newProductDiv.classList.add('HomeProduct');
+          newProductDiv.style.border = '1px solid #ccc';
+          newProductDiv.style.borderRadius = '5px';
+          newProductDiv.style.padding = '10px';
+          newProductDiv.style.marginBottom = '20px';
+          newProductDiv.style.width = '300px';
+          newProductDiv.style.marginRight = "10px";
+
+          const img = document.createElement('img');
+          img.src = product.Image;
+          img.alt = 'Product Image';
+          img.style.width = '50%';
+          img.style.height = 'auto';
+          img.style.borderRadius = '5px';
+          img.style.marginBottom = '10px';
+
+          const productName = document.createElement('h2');
+          productName.textContent = product.ProductName;
+          productName.style.margin = '0';
+          productName.style.fontSize = '1.5rem';
+
+          const stock = document.createElement('p');
+          stock.textContent = `Stock: ${product.Stock}`;
+          stock.style.margin = '5px 0';
+
+          const price = document.createElement('p');
+          price.textContent = `Price: ${product.Price}`;
+          price.style.margin = '5px 0';
+
+          const size = document.createElement('p');
+          size.textContent = `Size: ${product.Size}`;
+          size.style.margin = '5px 0';
+
+          newProductDiv.appendChild(img);
+          newProductDiv.appendChild(productName);
+          newProductDiv.appendChild(stock);
+          newProductDiv.appendChild(price);
+          newProductDiv.appendChild(size);
+
+          featuredShoesDisplay.appendChild(newProductDiv);
         });
+      } catch (error) {
+        console.error('Error fetching and displaying products:', error);
+      }
+    }
+
+
+  </script>
+
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggleBtn = document.querySelector(".toggle-btn");
+      const dropdownNav = document.querySelector(".navBtnDropDown");
+
+      toggleBtn.addEventListener("click", function () {
+        // Toggle the 'active' class on the dropdownNav
+        dropdownNav.classList.toggle("active");
+
+        // Toggle between menu icon and close icon
+        const icon = toggleBtn.querySelector("i");
+
+        // Toggle 'fa-bars' and 'fa-times'
+        icon.classList.toggle("fa-bars");
+        icon.classList.toggle("fa-times");
       });
+    });
 
-      const logInSec = document.querySelector("#logInSec");
-      const signUpSec = document.querySelector("#signUpSec");
+    const generateOTPBtn = document.getElementById("generateOTPBtn");
+    const otpLabel = document.getElementById("otpLabel");
+    const otpInput = document.getElementById("otpInput");
 
-      function CreateAccount(event) {
-        event.preventDefault();
+    generateOTPBtn.addEventListener("click", generateOTP);
 
-        logInSec.style.display = "none";
-        signUpSec.style.display = "flex";
+    function generateOTP(event) {
+      event.preventDefault();
+      const generatedOTP = Math.floor(100 + Math.random() * 900); // Generate a random 3-digit OTP
+      otpLabel.textContent = "OTP: " + generatedOTP;
+      otpLabel.style.display = "block";
+      otpInput.style.display = "block";
+    }
+    const logInSec = document.querySelector("#logInSec");
+    const signUpSec = document.querySelector("#signUpSec");
+
+    function CreateAccount(event) {
+      event.preventDefault();
+
+      logInSec.style.display = "none";
+      signUpSec.style.display = "flex";
+    }
+
+    function SignUp(event) {
+      event.preventDefault();
+      console.log("Sign Up Clicked!");
+      alert("Signup clicked!");
+
+      var form = document.getElementById("createAccSec");
+      var formData = new FormData(form);
+
+      // Retrieve username and password fields
+      var Username = formData.get("Username");
+      var Password = formData.get("Password");
+
+      // Check if username or password is empty
+      if (!Password || !Password) {
+        alert("Please input both username and password!");
+        return; // Return early to prevent further execution
       }
 
-      function SignUp(event) {
-        event.preventDefault();
-        console.log("Sign Up Clicked!");
-        alert("Signup clicked!");
+      // Log form data
+      for (var pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
 
-        var form = document.getElementById("createAccSec");
-        var formData = new FormData(form);
+      var urlEncodedData = new URLSearchParams(formData).toString();
 
-        // Retrieve username and password fields
-        var Username = formData.get("Username");
-        var Password = formData.get("Password");
-
-        // Check if username or password is empty
-        if (!Password || !Password) {
-          alert("Please input both username and password!");
-          return; // Return early to prevent further execution
-        }
-
-        // Log form data
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ": " + pair[1]);
-        }
-
-        var urlEncodedData = new URLSearchParams(formData).toString();
-
-        // Send the form data to the server
-        fetch("/createAccount", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded", // Set the content type to URL-encoded
-          },
-          body: urlEncodedData,
+      // Send the form data to the server
+      fetch("/createAccount", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded", // Set the content type to URL-encoded
+        },
+        body: urlEncodedData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
         })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log("Success:", data);
-            alert("Account created successfully!");
+        .then((data) => {
+          console.log("Success:", data);
+          alert("Account created successfully!");
 
-            backToLogIn(
-              new Event("submit", { cancelable: true, bubbles: true })
+          backToLogIn(
+            new Event("submit", { cancelable: true, bubbles: true })
+          );
+        })
+        .catch((error) => {
+          alert("Error: " + error.message);
+          console.error("Error:", error);
+        });
+    }
+
+    function backToLogIn(event) {
+      event.preventDefault();
+
+      signUpSec.style.display = "none";
+      logInSec.style.display = "flex";
+    }
+
+    function LoginIn(event) {
+      event.preventDefault();
+      console.log("Login button clicked!");
+      alert("Login Clicked!");
+
+      const username = document.querySelector("input[name='Username']").value;
+      const password = document.querySelector("input[name='Password']").value;
+      const enteredOTP = document.querySelector("input[name='OTP']").value;
+
+      // Check if username, password, and OTP are provided
+      if (!username || !password || !enteredOTP) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      var form = document.getElementById("logInSec");
+      var formData = new FormData(form);
+
+      // Validate OTP
+      const generatedOTP = document
+        .getElementById("otpLabel")
+        .textContent.split(" ")[1]; // Extract generated OTP
+      if (enteredOTP !== generatedOTP) {
+        alert("Incorrect OTP. Please try again.");
+        return;
+      }
+
+      var urlEncodedData = new URLSearchParams(formData).toString();
+
+      fetch("/logIn", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: urlEncodedData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(
+              "Wrong password or Username, ayusin mo mag login!"
             );
-          })
-          .catch((error) => {
-            alert("Error: " + error.message);
-            console.error("Error:", error);
-          });
-      }
-
-      function backToLogIn(event) {
-        event.preventDefault();
-
-        signUpSec.style.display = "none";
-        logInSec.style.display = "flex";
-      }
-
-      function LoginIn(event) {
-        event.preventDefault();
-        console.log("Login button clicked!");
-        alert("Login Clicked!");
-
-        const username = document.querySelector("input[name='Username']").value;
-        const password = document.querySelector("input[name='Password']").value;
-        const enteredOTP = document.querySelector("input[name='OTP']").value;
-
-        
-        // Check if username, password, and OTP are provided
-        if (!username || !password || !enteredOTP) {
-          alert("Please fill in all fields.");
-          return;
-        }
-
-
-
-        var form = document.getElementById("logInSec");
-        var formData = new FormData(form);
-
-        // Validate OTP
-        const generatedOTP = document
-          .getElementById("otpLabel")
-          .textContent.split(" ")[1]; // Extract generated OTP
-        if (enteredOTP !== generatedOTP) {
-          alert("Incorrect OTP. Please try again.");
-          return;
-        }
-
-        var urlEncodedData = new URLSearchParams(formData).toString();
-
-        fetch("/logIn", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: urlEncodedData,
+          }
+          // Redirect to the main page
+          window.location.href = "/Customer-Dashboard";
         })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(
-                "Wrong password or Username, ayusin mo mag login!"
-              );
-            }
-            // Redirect to the main page
-            window.location.href = "/Customer-Dashboard";
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert("Error: " + error.message);
-          });
-      }
-    </script>
-  </body>
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("Error: " + error.message);
+        });
+    }
+  </script>
+</body>
+
 </html>

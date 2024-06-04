@@ -1,301 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <script src="/socket.io/socket.io.js"></script>
-  </head>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      scroll-behavior: smooth;
-    }
 
-    body {
-      font-family: "Arial", sans-serif;
-      position: relative;
-    }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
 
-    nav {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      position: sticky;
-      margin-top: 1rem;
-      width: 96%;
-      top: 0;
-      z-index: 1000;
-      margin-left: 2%;
-      border-radius: 0.5rem;
-    }
+  body {
+    font-family: "Arial", sans-serif;
+    position: relative;
+  }
 
-    nav div {
-      margin: 1rem;
-    }
+  nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: sticky;
+    margin-top: 1rem;
+    width: 96%;
+    top: 0;
+    z-index: 1000;
+    margin-left: 2%;
+    border-radius: 0.5rem;
+  }
 
-    #navBtn {
-      background-color: #e36906;
-      display: flex;
-      border: none;
-      border-radius: 5rem;
-      padding: 0.5rem 4rem;
-      gap: 2rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-    }
+  nav div {
+    margin: 1rem;
+  }
 
-    #navBtn button {
-      color: white;
-    }
+  #navBtn {
+    background-color: #e36906;
+    display: flex;
+    border: none;
+    border-radius: 5rem;
+    padding: 0.5rem 4rem;
+    gap: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
 
-    nav button {
-      padding: 0.5rem;
-      cursor: pointer;
-      font-size: 1.2rem;
-      background-color: transparent;
-      border: none;
-    }
+  #navBtn button {
+    color: white;
+  }
 
-    #main {
-      display: flex;
-      width: 100%;
-      height: auto;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+  nav button {
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background-color: transparent;
+    border: none;
+  }
 
-    #ProductSection {
-      display: flex;
-      flex-wrap: wrap;
-      background-color: #fff3e9;
-      height: auto;
-      width: 50rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-    }
+  #main {
+    display: flex;
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 
-    .prodTable {
-      margin: 1rem;
-      width: 48rem;
-      height: 18rem;
-      overflow-y: auto;
-    }
+  #ProductSection {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #fff3e9;
+    height: auto;
+    width: 50rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
 
-    table {
-      width: 96%;
-      height: 15rem;
-      border-collapse: collapse;
-      margin: 1rem 1rem;
-    }
+  .prodTable {
+    margin: 1rem;
+    width: 48rem;
+    height: 18rem;
+    overflow-y: auto;
+  }
 
-    th,
-    td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
+  table {
+    width: 96%;
+    height: 15rem;
+    border-collapse: collapse;
+    margin: 1rem 1rem;
+  }
 
-    th {
-      background-color: #f4f4f4;
-    }
+  th,
+  td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
 
-    tr:hover {
-      background-color: #f1f1f1;
-    }
+  th {
+    background-color: #f4f4f4;
+  }
 
-    .prodInputDiv {
-      margin: 2rem;
-      display: flex;
-      flex-wrap: wrap;
-      width: 45rem;
-      height: auto;
-      text-align: center;
-    }
+  tr:hover {
+    background-color: #f1f1f1;
+  }
 
-    .inventoryFile {
-      width: 10rem;
-      height: auto;
-      margin-bottom: 1rem;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+  .prodInputDiv {
+    margin: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    width: 45rem;
+    height: auto;
+    text-align: center;
+  }
 
-    #imagePreview {
-      height: 7rem;
-      width: 7rem;
-      margin: 0.5rem;
-      align-content: center;
-      border: 1px solid #ddd;
-      border-radius: 0.8rem;
-      padding: 0.2rem;
-    }
+  .inventoryFile {
+    width: 10rem;
+    height: auto;
+    margin-bottom: 1rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 
-    #OrderSection {
-      display: none;
-      background-color: #fff3e9;
-      height: 35rem;
-      width: 50rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-    }
-    #SuccessSection {
-      display: none;
-      background-color: #fff3e9;
-      height: 35rem;
-      width: 50rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-    }
-  </style>
+  #imagePreview {
+    height: 7rem;
+    width: 7rem;
+    margin: 0.5rem;
+    align-content: center;
+    border: 1px solid #ddd;
+    border-radius: 0.8rem;
+    padding: 0.2rem;
+  }
 
-  <body>
-    <nav>
-      <div>
-        <a href="#mainImgDiv"
-          ><img src="/icons/bola.png.png" width="50rem"
-        /></a>
+  #OrderSection {
+    display: none;
+    background-color: #fff3e9;
+    height: 35rem;
+    width: 50rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #SuccessSection {
+    display: none;
+    background-color: #fff3e9;
+    height: 35rem;
+    width: 50rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+
+<body>
+  <nav>
+    <div>
+      <a href="#mainImgDiv"><img src="/icons/bola.png.png" width="50rem" /></a>
+    </div>
+    <div id="navBtn">
+      <button onclick="manageBtn()">Manage Products</button>
+      <button onclick="orderBtn()">Order Details</button>
+      <button onclick="SuccessBtn()">Order successful</button>
+    </div>
+  </nav>
+
+  <main id="main">
+    <section id="ProductSection">
+      <div class="prodTable">
+        <table>
+          <thead>
+            <tr>
+              <th>Shoes Name</th>
+              <th>Category</th>
+              <th>Size</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="tableData"></tbody>
+        </table>
       </div>
-      <div id="navBtn">
-        <button onclick="manageBtn()">Manage Products</button>
-        <button onclick="orderBtn()">Order Details</button>
-        <button onclick="SuccessBtn()">Order successful</button>
+      <div class="prodInputDiv">
+        <div class="prodInput">
+          <input id="productName" type="text" style="margin: 1rem" placeholder="Shoe name" maxlength="15" />
+        </div>
+        <div class="prodInput">
+          <select id="category" style="margin: 1rem">
+            <option value="" disabled selected>Select an Category</option>
+            <option value="men">Men</option>
+            <option value="women">Woman</option>
+            <option value="kids">Kids</option>
+          </select>
+        </div>
+        <div class="prodInput">
+          <input id="size" type="text" style="margin: 1rem" placeholder="Size" maxlength="2" />
+        </div>
+        <div class="prodInput">
+          <input id="price" type="text" style="margin: 1rem" placeholder="Price" maxlength="6" />
+        </div>
+        <div class="prodInput">
+          <input id="stock" type="text" style="margin: 1rem" placeholder="Stock" maxlength="3" />
+        </div>
+
+        <div class="prodInput">
+          <label id="imageUpload" for="fileInput">Upload Image</label>
+
+          <div id="imagePreview"></div>
+
+          <input type="file" style="width: 5.5rem" id="fileInput" accept="image/*" />
+        </div>
+
+        <div class="prodInput">
+          <button onclick="addProduct()">Add Product</button>
+        </div>
       </div>
-    </nav>
+    </section>
 
-    <main id="main">
-      <section id="ProductSection">
-        <div class="prodTable">
-          <table>
-            <thead>
-              <tr>
-                <th>Shoes Name</th>
-                <th>Category</th>
-                <th>Size</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody id="tableData"></tbody>
-          </table>
-        </div>
-        <div class="prodInputDiv">
-          <div class="prodInput">
-            <input
-              id="productName"
-              type="text"
-              style="margin: 1rem"
-              placeholder="Shoe name"
-            />
-          </div>
-          <div class="prodInput">
-            <select id="category" style="margin: 1rem">
-              <option value="" disabled selected>Select an Category</option>
-              <option value="men">Men</option>
-              <option value="women">Woman</option>
-              <option value="kids">Kids</option>
-            </select>
-          </div>
-          <div class="prodInput">
-            <input
-              id="size"
-              type="text"
-              style="margin: 1rem"
-              placeholder="Size"
-            />
-          </div>
-          <div class="prodInput">
-            <input
-              id="price"
-              type="text"
-              style="margin: 1rem"
-              placeholder="Price"
-            />
-          </div>
-          <div class="prodInput">
-            <input
-              id="stock"
-              type="text"
-              style="margin: 1rem"
-              placeholder="Stock"
-            />
-          </div>
+    <section id="OrderSection"></section>
 
-          <div class="prodInput">
-            <label id="imageUpload">Upload Image</label>
+    <section id="SuccessSection"></section>
+  </main>
 
-            <div id="imagePreview"></div>
+  <script>
 
-            <input
-              type="file"
-              style="width: 5.5rem"
-              id="fileInput"
-              accept="image/*"
-            />
-          </div>
-
-          <div class="prodInput">
-            <button onclick="addProduct()">Add Product</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="OrderSection"></section>
-
-      <section id="SuccessSection"></section>
-    </main>
+    document.addEventListener("DOMContentLoaded", fetchProductsAndDisplay);
 
 
-    <script>
-      function manageBtn() {
-        const ProductSection = document.querySelector("#ProductSection");
-        const OrderSection = document.querySelector("#OrderSection");
-        const SuccessSection = document.querySelector("#SuccessSection");
+    async function fetchProductsAndDisplay() {
+      try {
+        const response = await fetch("/shoes_products");
+        const products = await response.json();
 
-        OrderSection.style.display = "none";
 
-        SuccessSection.style.display = "none";
+        const tableData = document.getElementById("tableData");
 
-        ProductSection.style.display = "flex";
+
+        products.forEach(product => {
+
+          const dateAdded = new Date(product.DateAdded);
+
+          const formattedDate = `${dateAdded.getFullYear()}-${(dateAdded.getMonth() + 1).toString().padStart(2, '0')}-${dateAdded.getDate().toString().padStart(2, '0')}`;
+
+
+
+
+
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+        <td>${product.ProductName}</td>
+        <td>${product.Category}</td>
+        <td>${product.Size}</td>
+        <td>${product.Price}</td>
+        <td>${product.Stock}</td>
+        <td>${formattedDate}</td>
+      `;
+          tableData.appendChild(newRow);
+        });
+      } catch (error) {
+        console.error('Error fetching and displaying products:', error);
+
+      }
+    }
+
+
+    document
+      .getElementById("fileInput")
+      .addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById("imagePreview");
+
+        preview.innerHTML = "";
+
+        if (file) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.style.maxWidth = "80%";
+            img.style.height = "auto";
+            preview.appendChild(img);
+          };
+
+          reader.readAsDataURL(file);
+        }
+      });
+
+    const socket = io();
+
+    function addProduct() {
+      const productName = document.getElementById("productName").value;
+      const category = document.getElementById("category").value;
+      const size = document.getElementById("size").value;
+      const price = document.getElementById("price").value;
+      const stock = document.getElementById("stock").value;
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+      const date = new Date().toLocaleDateString();
+      const preview = document.getElementById("imagePreview");
+
+      if (!productName || !category || !size || !price || !stock || !file) {
+        alert("Please fill in all fields and upload an image.");
+        return;
       }
 
-      function orderBtn() {
-        const ProductSection = document.querySelector("#ProductSection");
-        const OrderSection = document.querySelector("#OrderSection");
-        const SuccessSection = document.querySelector("#SuccessSection");
+      const tableData = document.getElementById("tableData");
 
-        ProductSection.style.display = "none";
-
-        SuccessSection.style.display = "none";
-
-        OrderSection.style.display = "flex";
+      const rows = tableData.getElementsByTagName("tr");
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        if (cells[0].textContent === productName) {
+          alert("Product name already exists. Please enter a new name.");
+          return;
+        }
       }
+      const newRow = document.createElement("tr");
 
-      function SuccessBtn() {
-        const ProductSection = document.querySelector("#ProductSection");
-        const OrderSection = document.querySelector("#OrderSection");
-        const SuccessSection = document.querySelector("#SuccessSection");
+      newRow.innerHTML = `
+    <td>${productName}</td>
+    <td>${category}</td>
+    <td>${size}</td>
+    <td>${price}</td>
+    <td>${stock}</td>
+    <td>${date}</td>
+  `;
 
-        ProductSection.style.display = "none";
+      tableData.appendChild(newRow);
 
-        OrderSection.style.display = "none";
+      const productData = {
+        productName,
+        category,
+        size,
+        price,
+        stock,
+        date
+      };
 
-        SuccessSection.style.display = "flex";
-      }
-    </script>
-  </body>
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        productData.image = e.target.result;
+
+        socket.emit('newProduct', productData);
+
+        console.log('Product added successfully');
+      };
+      reader.readAsDataURL(file);
+
+
+      document.getElementById("productName").value = "";
+      document.getElementById("category").value = "";
+      document.getElementById("size").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("stock").value = "";
+      fileInput.value = "";
+      preview.innerHTML = "";
+    }
+
+
+
+  </script>
+
+
+
+  <script>
+    function manageBtn() {
+      const ProductSection = document.querySelector("#ProductSection");
+      const OrderSection = document.querySelector("#OrderSection");
+      const SuccessSection = document.querySelector("#SuccessSection");
+
+      OrderSection.style.display = "none";
+
+      SuccessSection.style.display = "none";
+
+      ProductSection.style.display = "flex";
+    }
+
+    function orderBtn() {
+      const ProductSection = document.querySelector("#ProductSection");
+      const OrderSection = document.querySelector("#OrderSection");
+      const SuccessSection = document.querySelector("#SuccessSection");
+
+      ProductSection.style.display = "none";
+
+      SuccessSection.style.display = "none";
+
+      OrderSection.style.display = "flex";
+    }
+
+    function SuccessBtn() {
+      const ProductSection = document.querySelector("#ProductSection");
+      const OrderSection = document.querySelector("#OrderSection");
+      const SuccessSection = document.querySelector("#SuccessSection");
+
+      ProductSection.style.display = "none";
+
+      OrderSection.style.display = "none";
+
+      SuccessSection.style.display = "flex";
+    }
+  </script>
+</body>
+
 </html>
