@@ -84,11 +84,38 @@ io.on('connection', (socket) => {
   });
 
   socket.on('confirmOrder', (orderData) => {
-    console.log('New product added:', orderData);
+    console.log('New Order Received', orderData);
 
 
-    io.emit('orderReceived', orderData);
+    io.emit('newCustomerOrder', orderData);
   });
+
+  socket.on('orderSuccess', async (orderDetails) => {
+    try {
+      await createHistoryTableIfNotExists();
+
+      const tableExists = await tableHistoryExists('Shoes_History');
+
+      if (tableExists) {
+        await pool.request()
+          .input('ProductName', sql.NVarChar(100), orderDetails.productName)
+          .input('Quantity', sql.Int, orderDetails.quantity)
+          .input('Subtotal', sql.Decimal(18, 2), orderDetails.subtotal)
+          .input('DateAdded', sql.Date, new Date())
+          .query(`
+            INSERT INTO Shoes_History (ProductName, Quantity, Subtotal, DateAdded)
+            VALUES (@ProductName, @Quantity, @Subtotal, @DateAdded)
+          `);
+          
+        console.log('Order details stored in Shoes_History table');
+      } else {
+        console.log('Shoes_History table does not exist');
+      }
+    } catch (err) {
+      console.error('Error storing order details:', err);
+    }
+  });
+  
 
 
 
@@ -96,6 +123,40 @@ io.on('connection', (socket) => {
     console.log('A client disconnected');
   });
 });
+
+
+async function tableHistoryExists(tableName) {
+  try {
+    const result = await pool.request()
+      .query(`SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'${tableName}'`);
+    return result.recordset.length > 0;
+  } catch (err) {
+    console.error('Error checking table existence:', err);
+    throw err;
+  }
+}
+
+async function createHistoryTableIfNotExists() {
+  const tableName = 'Shoes_History';
+  try {
+    if (!(await tableHistoryExists(tableName))) {
+      await pool.request().query(`
+          CREATE TABLE ${tableName} (
+            ID INT IDENTITY(1,1) PRIMARY KEY,
+            ProductName NVARCHAR(100) NOT NULL,
+            Quantity INT NOT NULL,
+            Subtotal DECIMAL(18, 2) NOT NULL,
+            DateAdded DATE NOT NULL
+          )
+        `);
+      console.log('Table created:', tableName);
+    }
+  } catch (err) {
+    console.error('Error creating table:', err);
+    throw err;
+  }
+}
+
 
 async function tableExists(tableName) {
   try {
@@ -228,6 +289,58 @@ app.get('/shoes_products', async (req, res) => {
   } catch (error) {
     console.error('Error fetching shoes products:', error);
     res.status(500).json({ error: 'Failed to fetch shoes products' });
+  }
+});
+
+app.get('/order_history', async (req, res) => {
+  try {
+    const result = await pool.request().query('SELECT * FROM Shoes_History');
+    const orderHistory = result.recordset;
+    res.status(200).json(orderHistory);
+  } catch (error) {
+    console.error('Error fetching order history:', error);
+    res.status(500).json({ error: 'Failed to fetch order history' });
+  }
+});
+
+app.put('/deduct_stock/:productName/:quantity', async (req, res) => {
+  const { productName, quantity } = req.params;
+  
+  try {
+    // Check if the product exists
+    const productExistsResult = await pool.request()
+      .input('ProductName', sql.NVarChar(100), productName)
+      .query(`
+        SELECT * FROM Shoes_Products
+        WHERE ProductName = @ProductName;
+      `);
+      
+    if (productExistsResult.recordset.length === 0) {
+      return res.status(404).send('Product not found');
+    }
+    
+    // Get the current stock quantity
+    const currentStock = productExistsResult.recordset[0].Stock;
+    
+    // Check if the available stock is sufficient for deduction
+    if (currentStock < quantity) {
+      return res.status(400).send('Insufficient stock');
+    }
+    
+    // Deduct the quantity from stock
+    await pool.request()
+      .input('ProductName', sql.NVarChar(100), productName)
+      .input('Quantity', sql.Int, quantity)
+      .query(`
+        UPDATE Shoes_Products
+        SET Stock = Stock - @Quantity
+        WHERE ProductName = @ProductName;
+      `);
+      
+    res.status(200).send('Stock deducted successfully');
+  } catch (err) {
+    console.error('Error deducting stock:', err);
+    res.status(500).send('Error deducting stock');
   }
 });
 

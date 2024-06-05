@@ -467,8 +467,8 @@
       document.getElementById('name').value = '';
       document.getElementById('delivery').value = '';
       document.getElementById('number').value = '';
-
-
+      const totalPriceDisplayed = document.querySelector('#totalPrice');
+      totalPriceDisplayed.innerHTML = '';
       const productCartSection = document.querySelector('#productCartSection');
       productCartSection.innerHTML = '';
     }

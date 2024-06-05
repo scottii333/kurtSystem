@@ -148,6 +148,37 @@
     align-items: center;
   }
 
+  .deliveredTable {
+    margin: 1rem;
+    width: 48rem;
+    height: 25rem;
+    /* Changed height to 25rem */
+    overflow-y: auto;
+  }
+
+  .deliveredTable table {
+    width: 96%;
+    height: 100%;
+    /* Adjusted height to 100% to fit the container */
+    border-collapse: collapse;
+    margin: 1rem 1rem;
+  }
+
+  .deliveredTable th,
+  .deliveredTable td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .deliveredTable th {
+    background-color: #f4f4f4;
+  }
+
+  .deliveredTable tr:hover {
+    background-color: #f1f1f1;
+  }
+
   #SuccessSection {
     display: none;
     background-color: #fff3e9;
@@ -158,6 +189,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    overflow-y: scroll;
   }
 </style>
 
@@ -228,10 +260,55 @@
 
     <section id="OrderSection"></section>
 
-    <section id="SuccessSection"></section>
+    <section id="SuccessSection">
+      <div class="deliveredTable">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Subtotal</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="successTableBody">
+            <!-- Delivered orders will be appended here -->
+          </tbody>
+        </table>
+      </div>
+
+
+    </section>
   </main>
 
   <script>
+    document.addEventListener("DOMContentLoaded", fetchOrderHistoryAndDisplay);
+
+    async function fetchOrderHistoryAndDisplay() {
+      try {
+        const response = await fetch("/order_history"); // Assuming your endpoint is '/order_history'
+        const orderHistory = await response.json();
+
+        const tableBody = document.getElementById("successTableBody");
+        orderHistory.forEach(order => {
+          const dateAdded = new Date(order.DateAdded);
+          const formattedDate = `${dateAdded.getFullYear()}-${(dateAdded.getMonth() + 1).toString().padStart(2, '0')}-${dateAdded.getDate().toString().padStart(2, '0')}`;
+
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+        <td>${order.ID}</td>
+        <td>${order.ProductName}</td>
+        <td>${order.Quantity}</td>
+        <td>₱${order.Subtotal.toFixed(2)}</td>
+        <td>${formattedDate}</td>
+      `;
+          tableBody.appendChild(newRow);
+        });
+      } catch (error) {
+        console.error('Error fetching and displaying order history:', error);
+      }
+    }
 
     document.addEventListener("DOMContentLoaded", fetchProductsAndDisplay);
 
@@ -364,6 +441,124 @@
       document.getElementById("stock").value = "";
       fileInput.value = "";
       preview.innerHTML = "";
+    }
+
+
+    socket.on('newCustomerOrder', (orderData) => {
+      console.log('New Customer Order:', orderData);
+      displayCustomerOrder(orderData);
+    });
+
+
+    function displayCustomerOrder(orderData) {
+
+      const OrderSection = document.querySelector('#OrderSection');
+      const customerOrderDiv = document.createElement('div');
+      customerOrderDiv.style.border = '1px solid #ccc';
+      customerOrderDiv.style.borderRadius = '5px';
+      customerOrderDiv.style.padding = '10px';
+      customerOrderDiv.style.marginBottom = '20px';
+      customerOrderDiv.style.width = '300px';
+      customerOrderDiv.style.marginRight = "10px";
+      customerOrderDiv.style.display = "flex";
+      customerOrderDiv.style.alignItems = "center";
+      customerOrderDiv.style.flexDirection = "column";
+      customerOrderDiv.style.flexWrap = "wrap";
+      customerOrderDiv.style.overflowY = 'auto';
+
+      const totalSubtotal = orderData.totalSubtotal + 100;
+
+      const orderId = generateOrderId();
+
+      customerOrderDiv.innerHTML = `
+        <h2>Order Details</h2>
+        <p><strong>Name:</strong> ${orderData.userDetails.name}</p>
+        <p><strong>Delivery Address:</strong> ${orderData.userDetails.deliveryAddress}</p>
+        <p><strong>Contact Number:</strong> ${orderData.userDetails.contactNumber}</p>
+        <p><strong>Payment Method:</strong> ${orderData.userDetails.paymentMethod}</p>
+        <h3>Products</h3>
+        <ul>
+          ${orderData.products.map(product => `
+            <li>
+              <p><strong>Product Name:</strong> ${product.productName}</p>
+              <p><strong>Quantity:</strong> ${product.quantity}</p>
+              <p><strong>Subtotal:</strong> ₱${product.subtotal.toFixed(2)}</p>
+            </li>
+          `).join('')}
+        </ul>
+        <p><strong>Total Subtotal:</strong> ₱${totalSubtotal.toFixed(2)}</p>
+        <button class="order-delivered-btn">Order Delivered</button>
+      `;
+
+      OrderSection.appendChild(customerOrderDiv);
+
+      const orderDeliveredBtn = customerOrderDiv.querySelector('.order-delivered-btn');
+      orderDeliveredBtn.addEventListener('click', () => {
+        alert(`Customer Order ${orderId} has been delivered, We will send a SMS notification to the customer provided number`);
+        addOrderToSuccessSection(orderId, orderData.products);
+        OrderSection.removeChild(customerOrderDiv);
+      });
+
+    }
+
+    function generateOrderId() {
+      const successTableBody = document.getElementById('successTableBody');
+      let maxOrderId = 0;
+
+
+      successTableBody.querySelectorAll('tr').forEach(row => {
+        const orderId = parseInt(row.querySelector('td:first-child').textContent);
+        if (!isNaN(orderId) && orderId > maxOrderId) {
+          maxOrderId = orderId;
+        }
+      });
+
+
+      return maxOrderId + 1;
+    }
+
+
+    async function addOrderToSuccessSection(orderId, products) {
+      const successTableBody = document.getElementById('successTableBody');
+      const currentDate = new Date().toISOString().slice(0, 10);
+
+      products.forEach(async (product, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+      <td>${orderId}</td>
+      <td>${product.productName}</td>
+      <td>${product.quantity}</td>
+      <td>₱${product.subtotal.toFixed(2)}</td>
+      <td>${currentDate}</td> <!-- Add today's date -->
+    `;
+        successTableBody.appendChild(tr);
+
+        const orderDetails = {
+          productName: product.productName,
+          quantity: product.quantity,
+          subtotal: product.subtotal,
+          date: currentDate
+        };
+
+        try {
+          // Emit order details to the server via Socket.IO
+          socket.emit('orderSuccess', orderDetails);
+          // Deduct ordered quantity from stock in Shoes_Products table
+          await deductFromStock(orderDetails.productName, orderDetails.quantity);
+        } catch (err) {
+          console.error('Error sending order details to the server:', err);
+        }
+
+
+      });
+    }
+
+    async function deductFromStock(productName, quantity) {
+      try {
+        await fetch(`/deduct_stock/${productName}/${quantity}`, { method: 'PUT' }); // Assuming endpoint for deducting stock is '/deduct_stock/:productName/:quantity'
+      } catch (error) {
+        console.error('Error deducting from stock:', error);
+      }
     }
 
 
