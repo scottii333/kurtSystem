@@ -307,7 +307,7 @@ app.put('/deduct_stock/:productName/:quantity', async (req, res) => {
   const { productName, quantity } = req.params;
   
   try {
-    // Check if the product exists
+  
     const productExistsResult = await pool.request()
       .input('ProductName', sql.NVarChar(100), productName)
       .query(`
@@ -319,15 +319,15 @@ app.put('/deduct_stock/:productName/:quantity', async (req, res) => {
       return res.status(404).send('Product not found');
     }
     
-    // Get the current stock quantity
+    
     const currentStock = productExistsResult.recordset[0].Stock;
     
-    // Check if the available stock is sufficient for deduction
+   
     if (currentStock < quantity) {
       return res.status(400).send('Insufficient stock');
     }
     
-    // Deduct the quantity from stock
+   
     await pool.request()
       .input('ProductName', sql.NVarChar(100), productName)
       .input('Quantity', sql.Int, quantity)

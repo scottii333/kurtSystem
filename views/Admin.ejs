@@ -555,7 +555,12 @@
 
     async function deductFromStock(productName, quantity) {
       try {
-        await fetch(`/deduct_stock/${productName}/${quantity}`, { method: 'PUT' }); // Assuming endpoint for deducting stock is '/deduct_stock/:productName/:quantity'
+        const response = await fetch(`/deduct_stock/${productName}/${quantity}`, { method: 'PUT' });
+        if (response.ok) {
+          console.log('Stock updated successfully');
+        } else {
+          console.error('Failed to update stock:', response.statusText);
+        }
       } catch (error) {
         console.error('Error deducting from stock:', error);
       }
