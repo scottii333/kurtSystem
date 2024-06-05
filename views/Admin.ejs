@@ -146,6 +146,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    overflow-y: scroll;
   }
 
   .deliveredTable {
@@ -273,7 +274,7 @@
             </tr>
           </thead>
           <tbody id="successTableBody">
-            <!-- Delivered orders will be appended here -->
+            
           </tbody>
         </table>
       </div>
@@ -287,7 +288,7 @@
 
     async function fetchOrderHistoryAndDisplay() {
       try {
-        const response = await fetch("/order_history"); // Assuming your endpoint is '/order_history'
+        const response = await fetch("/order_history"); 
         const orderHistory = await response.json();
 
         const tableBody = document.getElementById("successTableBody");
