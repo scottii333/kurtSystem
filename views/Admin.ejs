@@ -495,7 +495,7 @@
 
       const orderDeliveredBtn = customerOrderDiv.querySelector('.order-delivered-btn');
       orderDeliveredBtn.addEventListener('click', () => {
-        alert(`Customer Order ${orderId} has been delivered, We will send a SMS notification to the customer provided number`);
+        alert(`Customer Order has been delivered, We will send a SMS notification to the customer provided number`);
         addOrderToSuccessSection(orderId, orderData.products);
         OrderSection.removeChild(customerOrderDiv);
       });
@@ -542,9 +542,9 @@
         };
 
         try {
-          // Emit order details to the server via Socket.IO
+          
           socket.emit('orderSuccess', orderDetails);
-          // Deduct ordered quantity from stock in Shoes_Products table
+      
           await deductFromStock(orderDetails.productName, orderDetails.quantity);
         } catch (err) {
           console.error('Error sending order details to the server:', err);
